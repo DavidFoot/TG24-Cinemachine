@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ae65f30c6b168b442a9957111c9f0b74
+guid: 598289df53725624a93e66fb3119e79b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -33,13 +33,13 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Crouched Walking
+      name: Walking Backwards
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 31
+      lastFrame: 36
       wrapMode: 0
-      orientationOffsetY: -45.55
+      orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0

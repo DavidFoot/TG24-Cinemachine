@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ae65f30c6b168b442a9957111c9f0b74
+guid: 08ec97472b3132a4c95c1d73d7cdbcab
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -24,7 +24,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -33,13 +33,13 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Crouched Walking
+      name: Crouching Idle
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 31
+      lastFrame: 75
       wrapMode: 0
-      orientationOffsetY: -45.55
+      orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
