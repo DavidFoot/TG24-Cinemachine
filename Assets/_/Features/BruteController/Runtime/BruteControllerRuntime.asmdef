@@ -1,0 +1,16 @@
+{
+    "name": "BruteControllerRuntime",
+    "rootNamespace": "BruteControllerRuntime",
+    "references": [
+        "GUID:5fab00af74bc8004bb4d791a959189a7"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

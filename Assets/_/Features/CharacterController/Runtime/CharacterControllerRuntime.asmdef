@@ -2,7 +2,8 @@
     "name": "CharacterControllerRuntime",
     "rootNamespace": "CharacterControllerRuntime",
     "references": [
-        "GUID:75469ad4d38634e559750d17036d5f7c"
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:4ff1b4ff351ed8242862057b0cd5b58d"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

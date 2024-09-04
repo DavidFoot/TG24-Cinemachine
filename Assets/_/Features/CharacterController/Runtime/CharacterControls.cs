@@ -1,9 +1,8 @@
+using BruteControllerRuntime;
 using System;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.EnhancedTouch;
-using UnityEngine.InputSystem.HID;
-using static UnityEngine.UI.Image;
+using UnityEngine.Playables;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace CharacterControllerRuntime
 {
@@ -13,6 +12,7 @@ namespace CharacterControllerRuntime
         Running,
         GoToWall,
         LeaveWall,
+        Strangling,
         WallLocked
     }
     public class CharacterControls : MonoBehaviour
@@ -42,6 +42,7 @@ namespace CharacterControllerRuntime
             {
                 case State.Free:
                     _frontWall = CheckWallAvailable(_hipsRayCast, 0.5f);
+                    IsInAttackRange();
                     _isCameraLinkedWithPlayerRotation = true;
                     _playerAnimator.applyRootMotion = false;
                     _playerAnimator.SetBool("IsStickToWall", false);
@@ -49,6 +50,16 @@ namespace CharacterControllerRuntime
                     {
                         _playerAnimator.SetBool("WallTransition", true);
                         _currentState = State.GoToWall;
+                    }
+                    break;
+                case State.Strangling:
+                    //_bruteController.ApplyRootMotion(true);
+                    _bruteController.SetDeath();
+                    if (_playableDirector.state == PlayState.Paused)
+                    {
+                        Debug.Log("Fin de Timeline");
+                        _currentState = State.Free;
+                        _bruteController = null;
                     }
                     break;
                 case State.WallLocked:                   
@@ -64,7 +75,6 @@ namespace CharacterControllerRuntime
                 case State.GoToWall:
                     _isCameraLinkedWithPlayerRotation = false;
                     _playerAnimator.applyRootMotion = true;
-
                     if (IsStickedToWall(0.12f))
                     {
                         SwitchCamera();
@@ -88,11 +98,14 @@ namespace CharacterControllerRuntime
 
                 default:  break;
             }
-            _playerController.SimpleMove(_moveDirection * _walkSpeed);
-
-            TrucDeTest();               
             if (Input.GetKey(KeyCode.LeftShift)) _playerAnimator.SetBool("Crouch", true);
             else _playerAnimator.SetBool("Crouch", false);
+            var speedToApply = _walkSpeed;
+            if (_playerAnimator.GetBool("Crouch")) speedToApply /= 2;
+            _playerController.SimpleMove(_moveDirection * speedToApply);
+
+            TrucDeTest();               
+            
             if (Input.GetKeyDown(KeyCode.Tab)) Cursor.lockState = CursorLockMode.None;          
         }
 
@@ -111,6 +124,30 @@ namespace CharacterControllerRuntime
             if (Physics.Raycast(origin.position, origin.forward, out hit,  distance, _wallLayerMask))
             {
                 _wallNormal = hit.normal;   
+                return true;
+            }
+            return false;
+        }
+
+        private bool IsInAttackRange()
+        {
+            Collider[] colliderArray = Physics.OverlapSphere(transform.position, 2.8f, _enemiesLayerMask);
+            if(colliderArray.Length > 0)
+            {
+                //Debug.Log("A Portée");
+                if (colliderArray[0].gameObject.GetComponent<BruteController>().CanGetStabbed())
+                {
+                    if (Vector3.SqrMagnitude(transform.position - colliderArray[0].gameObject.transform.position) < 1) _playableDirector.initialTime = 5.5f;
+
+                    _bruteController = colliderArray[0].gameObject.GetComponent<BruteController>();
+                    //Debug.Log("CanBeBackstab");
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        //Debug.Log("Play Timeline");
+                        _playableDirector.Play();
+                        _currentState = State.Strangling;
+                    }
+                }
                 return true;
             }
             return false;
@@ -142,6 +179,7 @@ namespace CharacterControllerRuntime
             _moveDirection = (_cameraForwardOnXZ * Input.GetAxis("Vertical")) + (_cameraRightOnXZ * Input.GetAxis("Horizontal"));
             _playerAnimator.SetFloat("WalkSpeed", Input.GetAxis("Vertical"));
             _playerAnimator.SetFloat("StrafeSpeed", Input.GetAxis("Horizontal"));
+             
             if (_moveDirection.sqrMagnitude > 1 ) _moveDirection = _moveDirection.normalized;   
         }
 
@@ -182,10 +220,14 @@ namespace CharacterControllerRuntime
         [SerializeField] Transform _rightHandTransform;
         [SerializeField] Transform _hipsRayCast;
         [SerializeField] LayerMask _wallLayerMask;
+        [SerializeField] LayerMask _enemiesLayerMask;
         [SerializeField] float  _wallTransitionTimer;
         [SerializeField] GameObject _cameraFree;
         [SerializeField] GameObject _cameraLock;
+        [SerializeField] PlayableDirector _playableDirector;
         CharacterController _playerController;
+        BruteController _bruteController;
+
         Transform _cameraTransform;
         Vector3 _moveDirection;
         Vector3 _cameraForwardOnXZ;
